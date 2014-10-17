@@ -8,6 +8,23 @@ Create a Router
 var router = new Router()
 ```
 
+Attach to an app
+----------------
+Add the routing/mounting capabilities to an app
+```javascript
+var app = Router(koa())
+```
+
+Use as Middleware
+----------------
+Add the routing/mounting capabilities to an app
+```javascript
+var app = koa()
+  , router = new Router()
+
+app.use(router.compose())
+```
+
 Specify Routes & Parameters
 ---------------------------
 
