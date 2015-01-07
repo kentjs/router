@@ -1,8 +1,19 @@
 {
   "dependencies": {
+    "co": "^4.1.0",
     "extend-object": "^1.0.0",
     "koa-compose": "^2.3.0",
     "methods": "^1.1.0",
     "path-match": "^1.2.2"
+  },
+  "devDependencies": {
+    "koa": "^0.14.0",
+    "mocha": "^2.1.0",
+    "should": "^4.4.2",
+    "should-eventually": "^0.1.4",
+    "supertest": "^0.15.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha --harmony"
   }
 }

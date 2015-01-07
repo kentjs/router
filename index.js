@@ -1,6 +1,7 @@
-var compose = require('koa-compose')
+var co = require('co')
+  , compose = require('koa-compose')
   , methods = require('methods')
-  , route = require('path-match')
+  , route = require('path-match')()
   , extend = require('extend-object')
 
 module.exports = Router
@@ -22,6 +23,7 @@ function Router(app) {
 	}
 
 	this.middleware = []
+	this.needs_composition = true
 }
 
 
@@ -60,9 +62,28 @@ var router = Router.prototype
  */
 
 router.compose = function() {
-	return compose(this.middleware)
+	this.needs_composition = false
+	return this.composed = compose(this.middleware)
 }
 
+
+/**
+ * Router composition. Composes the router's internal middleware/routes
+ * for use as middleware in a koa application
+ *
+ * @return {GeneratorFunction}
+ * @api public
+ */
+
+router.route = function(ctx) {
+	if(this.needs_composition) this.compose()
+	if(typeof ctx == 'string') ctx = { path:ctx }
+	ctx.method = (ctx.method || 'GET').toUpperCase()
+	var promise = co.wrap(this.composed).call(ctx)
+	return new Promise(function(resolve, reject) {
+		promise.then(function() { resolve(ctx) }, reject)
+	})
+}
 
 /**
  * Create `router.verb()` methods, 
@@ -73,7 +94,7 @@ router.compose = function() {
 ;['all'].concat(methods).forEach(function(method) {
 	var METHOD = method == 'all' 
 	           ? null 
-	           : method.toUppercase
+	           : method.toUpperCase()
 
 	router[method] = function(path) {
 		var match = route(path)
@@ -82,19 +103,18 @@ router.compose = function() {
 		            : compose([].slice.call(arguments, 1))
 		
 		this.middleware.push(function* routePath(next) {
-			var params
-			
 			if(METHOD && this.method != METHOD) 
 				return yield* next
 			
-			params = match(this.pathname)
-			
-			if(!params) 
+			this.params = match(this.path)
+
+			if(!this.params) 
 				return yield* next
 
-			this.params = params
 			yield* handler.call(this, next)
 		})
+
+		this.needs_composition = true
 
 		return this
 	}
