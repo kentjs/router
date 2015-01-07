@@ -43,7 +43,8 @@ router.route({ method:'GET', path:'/users/123' }).then(function(ctx) {})
 You may also pass a path string instead of a context object, and a context will be created for you defaulting to the `GET` method.
 ```javascript
 router.route('/users').then(function(ctx) {
-	assert(ctx.path = )
+	assert(ctx.path == '/users')
+	assert(ctx.method == 'GET')
 })
 ```
 
