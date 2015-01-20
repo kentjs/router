@@ -15,15 +15,16 @@ module.exports = Router
  * @api public
  */
 
-function Router(app) {
-	if(app) {
-		return Router.injectInto(app)
-	} else if(!(this instanceof Router)) {
-		return new Router
-	}
+function Router(fn) {
+	if(fn && fn.listen)
+		return Router.injectInto(fn)
+	if(!(this instanceof Router))
+		return new Router(fn)
 
 	this.middleware = []
 	this.needs_composition = true
+
+	if(fn) fn.call(this)
 }
 
 
