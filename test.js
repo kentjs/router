@@ -8,7 +8,7 @@ describe('Router', function() {
 	beforeEach(function() {
 		this.router = new Router()
 	})
-	it('should call the correct router', function(done) {
+	it('should match the correct route', function(done) {
 		this.router.get('/', function*() {
 			this.failure = true
 		})
@@ -16,6 +16,19 @@ describe('Router', function() {
 			this.success = true
 		})
 		this.router.route({ path:'/user', method:'GET' }).then(function(ctx) {
+			ctx.success.should.be.true
+			should(ctx.failure).not.exist
+			done()
+		})
+	})
+	it('should match the correct method', function(done) {
+		this.router.get('/', function*() {
+			this.failure = true
+		})
+		this.router.post('/', function*() {
+			this.success = true
+		})
+		this.router.route({ path:'/', method:'POST' }).then(function(ctx) {
 			ctx.success.should.be.true
 			should(ctx.failure).not.exist
 			done()
