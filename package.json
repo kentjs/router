@@ -1,4 +1,8 @@
 {
+  "name": "kent-router",
+  "version": "1.0.0",
+  "description": "express style router for kent/koa",
+  "main": "index.js",
   "dependencies": {
     "co": "^4.1.0",
     "extend-object": "^1.0.0",
